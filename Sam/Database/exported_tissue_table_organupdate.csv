@@ -1,0 +1,308 @@
+tissue_id;tissue_name;cell_type;disease_status;organ_id
+262;Adipose tissue;Adipose tissue;Healthy;1
+400;Adipose tissue;Adipose tissue;Healthy;1
+430;Adipose tissue;Adipose tissue;Healthy;1
+151;Adrenal gland;Adrenal gland;Healthy;2
+289;Adrenal gland;Adrenal gland;Healthy;2
+421;Adrenal gland;Adrenal gland;Healthy;2
+422;Appendix;Appendix;Healthy;3
+152;B-cells;B-cells;Healthy;4
+215;B-cells;B-cells;Healthy;4
+290;B-cells;B-cells;Healthy;4
+353;B-cells;B-cells;Healthy;4
+146;Blood;Blood platelets;Healthy;5
+147;Blood;Blood;Healthy;5
+175;Blood;Blood plasma;Healthy;5
+181;Blood;Blood plasma;Diseased;5
+182;Blood;Neutrophil;Healthy;5
+191;Blood;Blood platelets;Diseased;5
+198;Blood;Blood;Diseased;5
+201;Blood;Blood serum;Diseased;5
+202;Blood;Blood serum;Healthy;5
+233;Blood;Blood plasma (EDTA);Healthy;5
+234;Blood;Blood plasma (with heparin added);Healthy;5
+235;Blood;Blood serum ;Healthy;5
+237;Blood;Blood platelet;Healthy;5
+250;Blood;Erythrocyte;Healthy;5
+251;Blood;Reticulocyte;Healthy;5
+266;Blood;Blood Plasma;Diseased;5
+272;Blood;Blood Plasma;Healthy;5
+273;Blood;Blood Serum;Healthy;5
+284;Blood;Blood platelets;Healthy;5
+285;Blood;Blood;Healthy;5
+313;Blood;Blood plasma;Healthy;5
+319;Blood;Blood plasma;Diseased;5
+320;Blood;Neutrophil;Healthy;5
+329;Blood;Blood platelets;Diseased;5
+336;Blood;Blood;Diseased;5
+339;Blood;Blood serum;Diseased;5
+340;Blood;Blood serum;Healthy;5
+371;Blood;Blood plasma (EDTA);Healthy;5
+372;Blood;Blood plasma (with heparin added);Healthy;5
+373;Blood;Blood serum ;Healthy;5
+375;Blood;Blood platelet;Healthy;5
+388;Blood;Erythrocyte;Healthy;5
+389;Blood;Reticulocyte;Healthy;5
+404;Blood;Blood Plasma;Diseased;5
+410;Blood;Blood Plasma;Healthy;5
+411;Blood;Blood Serum;Healthy;5
+195;Bone;Bone;Healthy;5
+333;Bone;Bone;Healthy;7
+423;Bone marrow;Bone marrow;Healthy;7
+145;Brain;Brain;Healthy;8
+157;Brain;Frontal cortex;Healthy;8
+199;Brain;Brain;Diseased;8
+230;Brain;Cerebral metastasis;Cancer;8
+238;Brain;Brain;Cell culture;8
+270;Brain;Substantia Nigra;Diseased;8
+271;Brain;Temporal Lobe;Diseased;8
+276;Brain;Substantia Nigra;Healthy;8
+278;Brain;Substantia nigra;Healthy;8
+283;Brain;Brain;Healthy;8
+295;Brain;Frontal cortex;Healthy;8
+337;Brain;Brain;Diseased;8
+368;Brain;Cerebral metastasis;Cancer;8
+376;Brain;Brain;Cell culture;8
+408;Brain;Substantia Nigra;Diseased;8
+409;Brain;Temporal Lobe;Diseased;8
+414;Brain;Substantia Nigra;Healthy;8
+416;Brain;Substantia nigra;Healthy;8
+424;Brain;Brain;Healthy;8
+176;Breast;Breast;Cancer (tissue near to Cancer);9
+177;Breast;Breast;Cancer (tissue far from Cancer);9
+178;Breast;Breast;Cancer;9
+314;Breast;Breast;Cancer (tissue near to Cancer);9
+315;Breast;Breast;Cancer (tissue far from Cancer);9
+316;Breast;Breast;Cancer;9
+189;Bronchoalveolar lavage;Bronchoalveolar lavage;Diseased;10
+327;Bronchoalveolar lavage;Bronchoalveolar lavage;Diseased;10
+185;Cartilage;Cartilage, chondrocyte;Healthy;11
+323;Cartilage;Cartilage, chondrocyte;Healthy;11
+194;Cerebrospinal fluid;Cerebrospinal fluid;Healthy;12
+200;Cerebrospinal fluid;Cerebrospinal fluid;Diseased;12
+267;Cerebrospinal fluid;Cerebrospinal fluid;Diseased;12
+274;Cerebrospinal fluid;Cerebrospinal fluid;Healthy;12
+332;Cerebrospinal fluid;Cerebrospinal fluid;Healthy;12
+338;Cerebrospinal fluid;Cerebrospinal fluid;Diseased;12
+405;Cerebrospinal fluid;Cerebrospinal fluid;Diseased;12
+412;Cerebrospinal fluid;Cerebrospinal fluid;Healthy;12
+256;Cervix;Cervix;Healthy;13
+394;Cervix;Cervix;Healthy;13
+149;Colon;Colon;no distinct annotation btw cell line, healthy and diseased;14
+155;Colon;Colon;Healthy;14
+207;Colon;Colon;Cancer;14
+218;Colon;Colon;Cancer;14
+232;Colon;Colon;Cell culture;14
+236;Colon;Colon;Extracellular vesicles of the tissue were isolated;14
+287;Colon;Colon;no distinct annotation btw cell line, healthy and diseased;14
+293;Colon;Colon;Healthy;14
+345;Colon;Colon;Cancer;14
+356;Colon;Colon;Cancer;14
+370;Colon;Colon;Cell culture;14
+374;Colon;Colon;Extracellular vesicles of the tissue were isolated;14
+425;Colon;Colon;Healthy;14
+179;Dental plaque;Dental plaque;Healthy;15
+317;Dental plaque;Dental plaque;Healthy;15
+426;Duodenum;Duodenum;Healthy;16
+427;Endometrium;Endometrium;Healthy;17
+156;Esophagus;Esophagus;Healthy;18
+227;Esophagus;Esophagus;Cell culture + cancer;18
+294;Esophagus;Esophagus;Healthy;18
+365;Esophagus;Esophagus;Cell culture + cancer;18
+428;Esophagus;Esophagus;Healthy;18
+231;Eye;Anterior chamber of the eye;Healthy;19
+239;Eye;Vitreous humor;Diseased;19
+279;Eye;Retina;Cell culture;19
+369;Eye;Anterior chamber of the eye;Healthy;19
+377;Eye;Vitreous humor;Diseased;19
+417;Eye;Retina;Cell culture;19
+429;fallopian tube/oviduct;fallopian tube/oviduct;Healthy;20
+206;Follicular fluid;Follicular fluid;Healthy;21
+344;Follicular fluid;Follicular fluid;Healthy;21
+158;Gall bladder;Gall bladder;Healthy;22
+296;Gall bladder;Gall bladder;Healthy;22
+431;Gall bladder;Gall bladder;Healthy;22
+160;Heart;Heart;Healthy;23
+224;Heart;Heart;Diseased;23
+298;Heart;Heart;Healthy;23
+362;Heart;Heart;Diseased;23
+432;Heart;Heart;Healthy;23
+264;Hela;Hela;Cell culture;24
+402;Hela;Hela;Cell culture;24
+161;Kidney;Kidney;Healthy;25
+187;Kidney;Kidney;Cell culture;25
+213;Kidney;Kidney, glomeruli;Healthy;25
+214;Kidney;Kidney, glomeruli;Healthy;25
+219;Kidney;Kidney;Cancer;25
+223;Kidney;Kidney, single tubules;Healthy;25
+225;Kidney;Kidney, podocytes;Healthy;25
+226;Kidney;Kidney, primary urinary cells;Healthy;25
+299;Kidney;Kidney;Healthy;25
+325;Kidney;Kidney;Cell culture;25
+351;Kidney;Kidney, glomeruli;Healthy;25
+352;Kidney;Kidney, glomeruli;Healthy;25
+357;Kidney;Kidney;Cancer;25
+361;Kidney;Kidney, single tubules;Healthy;25
+363;Kidney;Kidney, podocytes;Healthy;25
+364;Kidney;Kidney, primary urinary cells;Healthy;25
+433;Kidney;Kidney;Healthy;25
+150;Liver;Liver;Cell culture;26
+162;Liver;Liver;Healthy;26
+208;Liver;Liver;Diseased;26
+220;Liver;Liver;Cancer;26
+229;Liver;Liver;Extracellular vesicles of the tissue were isolated;26
+277;Liver;Liver;Cancer;26
+288;Liver;Liver;Cell culture;26
+300;Liver;Liver;Healthy;26
+346;Liver;Liver;Diseased;26
+358;Liver;Liver;Cancer;26
+367;Liver;Liver;Extracellular vesicles of the tissue were isolated;26
+415;Liver;Liver;Cancer;26
+434;Liver;Liver;Healthy;26
+163;Lung;Lung;Healthy;27
+197;Lung;Lung;Cell culture + cancer;27
+203;Lung;Lung;Cancer;27
+209;Lung;Lung;Cell culture;27
+210;Lung;Lung;Diseased;27
+301;Lung;Lung;Healthy;27
+335;Lung;Lung;Cell culture + cancer;27
+341;Lung;Lung;Cancer;27
+347;Lung;Lung;Cell culture;27
+348;Lung;Lung;Diseased;27
+435;Lung;Lung;Healthy;27
+192;Lymph node;Lymph node;Cell culture;28
+281;Lymph node;Lymph node;Cancer;28
+330;Lymph node;Lymph node;Cell culture;28
+419;Lymph node;Lymph node;Cancer;28
+436;lymph node;Lymph node;Healthy;28
+228;Menstrual fluid;Menstrual fluid;Healthy;29
+366;Menstrual fluid;Menstrual fluid;Healthy;29
+164;Monocytes;Monocytes;Healthy;30
+275;Monocytes;Monocytes;Healthy;30
+302;Monocytes;Monocytes;Healthy;30
+413;Monocytes;Monocytes;Healthy;30
+240;Nasal polyps;Nasal polyps;Healthy;31
+378;Nasal polyps;Nasal polyps;Healthy;31
+165;NK-cells;NK-cells;Healthy;32
+303;NK-cells;NK-cells;Healthy;32
+166;Ovary;Ovary;Healthy;33
+204;Ovary;Ovary;Cell culture + cancer;33
+245;Ovary;Ovary;Cancer;33
+268;Ovary;Ovary;Diseased;33
+304;Ovary;Ovary;Healthy;33
+342;Ovary;Ovary;Cell culture + cancer;33
+383;Ovary;Ovary;Cancer;33
+406;Ovary;Ovary;Diseased;33
+437;Ovary;Ovary;Healthy;33
+241;Tonsil;Tonsil;Healthy;34
+379;Tonsil;Tonsil;Healthy;34
+167;Pancreas;Pancreas;Healthy;35
+221;Pancreas;Pancreatic islet;Healthy;35
+249;Pancreas;Pancreas;Cancer;35
+265;Pancreas;Pancreatic islet;Diseased;35
+269;Pancreas;Pancreas;Diseased;35
+305;Pancreas;Pancreas;Healthy;35
+359;Pancreas;Pancreatic islet;Healthy;35
+387;Pancreas;Pancreas;Cancer;35
+403;Pancreas;Pancreatic islet;Diseased;35
+407;Pancreas;Pancreas;Diseased;35
+438;Pancreas;Pancreas;Healthy;35
+242;Parotid gland;Parotid gland;Healthy;36
+380;Parotid gland;Parotid gland;Healthy;36
+180;PBMC;PBMC;Healthy;37
+318;PBMC;PBMC;Healthy;37
+222;Peritoneal dialysis fluid;Peritoneal dialysis fluid;Healthy;38
+360;Peritoneal dialysis fluid;Peritoneal dialysis fluid;Healthy;38
+439;Pituitary gland;Pituitary gland;Healthy;39
+168;Placenta;Placenta;Healthy;40
+306;Placenta;Placenta;Healthy;40
+440;Placenta;Placenta;Healthy;40
+169;Prostate;Prostate;Healthy;41
+307;Prostate;Prostate;Healthy;41
+441;Prostate;Prostate;Healthy;41
+170;Rectum;Rectum;Healthy;42
+308;Rectum;Rectum;Healthy;42
+442;Rectum;Rectum;Healthy;42
+171;Retina;Retina;Healthy;43
+309;Retina;Retina;Healthy;43
+253;Saliva;Saliva;Diseased;44
+260;Saliva;Saliva;Healthy;44
+391;Saliva;Saliva;Diseased;44
+398;Saliva;Saliva;Healthy;44
+443;Salivary gland;Salivary gland;Healthy;45
+248;Skeletal muscle;Skeletal muscle;Healthy;46
+386;Skeletal muscle;Skeletal muscle;Healthy;46
+196;Skin;Fibroblast;Healthy;47
+211;Skin;Skin;Diseased;47
+216;Skin;Keratinocytes;Healthy;47
+247;Skin;Epithelial cell;Cell culture + cancer;47
+252;Skin;Skin;Healthy;47
+261;Skin;Fibroblast;Cancer;47
+280;Skin;Keratinocytes;Diseased;47
+282;Skin;Keratinocytes;Cancer;47
+334;Skin;Fibroblast;Healthy;47
+349;Skin;Skin;Diseased;47
+354;Skin;Keratinocytes;Healthy;47
+385;Skin;Epithelial cell;Cell culture + cancer;47
+390;Skin;Skin;Healthy;47
+399;Skin;Fibroblast;Cancer;47
+418;Skin;Keratinocytes;Diseased;47
+420;Skin;Keratinocytes;Cancer;47
+159;Small intestine;Small intestine;Healthy;48
+246;Small intestine;Small intestine;Diseased;48
+297;Small intestine;Small intestine;Healthy;48
+384;Small intestine;Small intestine;Diseased;48
+444;Small intestine;Small intestine;Healthy;48
+445;Smooth muscle;Smooth muscle;Healthy;49
+172;Spinal cord;Spinal cord;Healthy;50
+310;Spinal cord;Spinal cord;Healthy;50
+446;Spleen;Spleen;Healthy;51
+183;Sputum;Sputum;Healthy;52
+184;Sputum;Sputum;Diseased;52
+321;Sputum;Sputum;Healthy;52
+322;Sputum;Sputum;Diseased;52
+447;Stomach;Stomach;Healthy;53
+205;Synovial tissue;Synovial tissue;Diseased;54
+343;Synovial tissue;Synovial tissue;Diseased;54
+153;T-cells;CD4 T-cells;Healthy;55
+154;T-cells;CD8 T-cells;Healthy;55
+255;T-cells;T-cells;Cell culture;55
+291;T-cells;CD4 T-cells;Healthy;55
+292;T-cells;CD8 T-cells;Healthy;55
+393;T-cells;T-cells;Cell culture;55
+173;Testis;Testis;Healthy;56
+311;Testis;Testis;Healthy;56
+448;Testis;Testis;Healthy;56
+449;Thyroid;Thyroid;Healthy;57
+450;Tonsil;Tonsil;Healthy;34
+258;Tooth;Tooth enamel;Healthy;59
+396;Tooth;Tooth enamel;Healthy;59
+188;Umbilical cord;Umbilical vein;Cell culture;60
+263;Umbilical cord;Umbilical cord;Healthy;60
+326;Umbilical cord;Umbilical vein;Cell culture;60
+401;Umbilical cord;Umbilical cord;Healthy;60
+148;Unknown;Unknown;Cell culture;61
+186;Unknown;Unknown;cancer;61
+212;Unknown;Unknown;no distinct annotation;61
+254;Unknown;Unknown;diseased;61
+286;Unknown;Unknown;Cell culture;61
+324;Unknown;Unknown;cancer;61
+350;Unknown;Unknown;no distinct annotation;61
+392;Unknown;Unknown;diseased;61
+190;Ureter;Ureter;Healthy;62
+328;Ureter;Ureter;Healthy;62
+174;Urinary bladder;Urinary bladder;Healthy;63
+217;Urinary bladder;Urinary bladder;Cancer;63
+312;Urinary bladder;Urinary bladder;Healthy;63
+355;Urinary bladder;Urinary bladder;Cancer;63
+451;Urinary bladder;Urinary bladder;Healthy;63
+193;Urine;Urine;Healthy;64
+257;Urine;Urine;Extracellular vesicles of the tissue were isolated;64
+259;Urine;Urine;Diseased;64
+331;Urine;Urine;Healthy;64
+395;Urine;Urine;Extracellular vesicles of the tissue were isolated;64
+397;Urine;Urine;Diseased;64
+243;Cervix;Cervix;Healthy;13
+244;Cervix;Cervix;Cancer;13
+381;Cervix;Cervix;Healthy;13
+382;Cervix;Cervix;Cancer;13
