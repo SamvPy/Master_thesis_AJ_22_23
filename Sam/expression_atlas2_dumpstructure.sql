@@ -18,7 +18,7 @@
 --
 -- Table structure for table `assay`
 --
-USE expression_atlas_shotgun;
+USE expression_atlas_cells;
 DROP TABLE IF EXISTS `assay`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -78,7 +78,7 @@ CREATE TABLE `mod_freq` (
   `mod_id` int NOT NULL,
   `freq` bigint NOT NULL DEFAULT '0',
   `mod_type` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +184,7 @@ CREATE TABLE `project` (
   `instrument` varchar(255) DEFAULT NULL,
   `keywords` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `ref` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`project_id`, `PXD_accession`)
+  UNIQUE KEY (`project_id`, `PXD_accession`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1701 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -280,16 +280,17 @@ CREATE TABLE `spectra` (
 -- Table structure for table `tissue`
 --
 
-DROP TABLE IF EXISTS `tissue`;
+DROP TABLE IF EXISTS `cell`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tissue` (
-  `tissue_id` int NOT NULL AUTO_INCREMENT,
-  `tissue_name` varchar(255) DEFAULT NULL,
-  `cell_type` varchar(255) DEFAULT NULL,
-  `disease_status` varchar(255) DEFAULT NULL,
+CREATE TABLE `cell` (
+  `cell_id` int NOT NULL AUTO_INCREMENT,
+  `cell_line` varchar(255) DEFAULT NULL,
+  `treated` varchar(255) DEFAULT NULL,
+  `disease` varchar(255) DEFAULT NULL,
+  `tissue_type` varchar(255) DEFAULT NULL,
   `organ_id` int DEFAULT NULL,
-  PRIMARY KEY (`tissue_id`),
+  PRIMARY KEY (`cell_id`),
   KEY `organ_id` (`organ_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=452 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -298,16 +299,16 @@ CREATE TABLE `tissue` (
 -- Table structure for table `tissue_to_assay`
 --
 
-DROP TABLE IF EXISTS `tissue_to_assay`;
+DROP TABLE IF EXISTS `cell_to_assay`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tissue_to_assay` (
+CREATE TABLE `cell_to_assay` (
   `assay_id` bigint NOT NULL,
-  `tissue_id` int NOT NULL,
-  UNIQUE KEY `uq_tissue_to_assay` (`assay_id`,`tissue_id`),
-  KEY `tissue_to_assay_ibfk_2` (`tissue_id`),
-  CONSTRAINT `tissue_to_assay_ibfk_1` FOREIGN KEY (`assay_id`) REFERENCES `assay` (`assay_id`),
-  CONSTRAINT `tissue_to_assay_ibfk_2` FOREIGN KEY (`tissue_id`) REFERENCES `tissue` (`tissue_id`)
+  `cell_id` int NOT NULL,
+  UNIQUE KEY `uq_cell_to_assay` (`assay_id`,`cell_id`),
+  KEY `cell_to_assay_ibfk_2` (`cell_id`),
+  CONSTRAINT `cell_to_assay_ibfk_1` FOREIGN KEY (`assay_id`) REFERENCES `assay` (`assay_id`),
+  CONSTRAINT `cell_to_assay_ibfk_2` FOREIGN KEY (`cell_id`) REFERENCES `cell` (`cell_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
