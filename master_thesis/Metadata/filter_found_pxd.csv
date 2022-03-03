@@ -1,0 +1,94 @@
+PXD;Cell;Useable;
+PXD000426;Jurkat;yes;
+PXD000612;HeLa;yes;
+PXD001247;;no;not human
+PXD001592;HeLa;yes;
+PXD001668;SHSY5Y;yes;
+PXD001952;MSC;yes;
+PXD001974;RCMH;yes;
+PXD002032;MDAMB231;yes;
+PXD002057;SKBR3;yes;
+PXD002676;HEK293;yes;
+PXD002842;LAN5;yes;
+PXD003252;A2780;yes;
+PXD003362;AC;no;not an established cell line
+PXD003438;Huh7;yes;
+PXD003587;HepG2;yes;
+PXD003594;MCF7;yes;
+PXD004051;MCF7;yes;
+PXD004824;HeLa;yes;
+PXD005045;BeWo;yes;
+PXD005507;HepG2;yes;
+PXD005620;HCT116;no;exosomes
+PXD006035;HEK293;yes;
+PXD006419;;no;DIA
+PXD006421;HL60;no;SRM
+PXD006614;HAP1;yes;
+PXD006653;;yes;
+PXD007543;MCF7;yes;
+PXD007837;hESCs;no;not an established cell line
+PXD007885;S9;no;infected
+PXD007906;HepG2;no;secretome
+PXD008035;GM;no;secretome
+PXD008381;KO52;yes;
+PXD008693;HEK293;yes;
+PXD008719;MCF7;yes;
+PXD008967;MDAMB231;yes;
+PXD009149;HL60;yes;
+PXD009185;HCT-116;yes;
+PXD009442;TNBC;yes;
+PXD009557;hiPSC;no ;not an established cell line
+PXD009560;SKNBE2;yes;
+PXD009600;HeLa;yes;
+PXD009861;HEK293;no;reused dataset
+PXD009933;HDF;no;not an established cell line
+PXD010012;HeLa;yes;
+PXD010256;U87;yes;
+PXD010306;SKBR3;yes;
+PXD010538;SHSY5Y;yes;
+PXD011580;U87;yes;
+PXD011961;;no;not an established cell line
+PXD013541;LN308;yes;
+PXD014300;group;yes;
+PXD014381;;yes;
+PXD015571;;no;not an established cell line
+PXD016119;NALM6;yes;
+PXD016742;;yes;
+PXD017391;THP1;yes;
+PXD017898;;no;not an established cell line
+PXD018066;;yes;
+PXD018450;HepG2;yes;
+PXD018625;hESCs;yes;
+PXD018918;IP;no;
+PXD021281;MSC;no;secretome
+PXD006095;H1993;no;kinase enrichment
+PXD007263;;maybe;check search file
+PXD009181;;maybe;check search file
+PXD009360;;maybe;check search file
+PXD009092;;maybe;check search file
+PXD009508;;maybe;check search file
+PXD009438;;maybe;check search file
+PXD009112;;maybe;check search file
+PXD010630;;yes;
+PXD017717;;no;
+PXD006386;;no;tmt
+PXD004280;Jurkat;yes;
+PXD006591;JVM;yes;
+PXD007671;;no;labeling
+PXD015847;;no;
+PXD013219;;no;
+PXD009444;;yes;
+PXD003120;;no;IP
+PXD006176;HUVEC;yes;
+PXD008012;;no;phospho
+PXD007759;U87;yes;
+PXD001460;;no;SILAC
+PXD002211;;no;
+PXD002212;;no;
+PXD003406;HUVEC;yes;
+PXD003407;HUVEC;yes;
+PXD003408;HUVEC;yes;
+PXD003409;HUVEC;yes;
+PXD003410;HUVEC;yes;
+PXD003411;HUVEC;yes;
+PXD008996;A431;yes;
