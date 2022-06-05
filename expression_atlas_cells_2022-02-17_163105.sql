@@ -19,7 +19,7 @@
 -- Table structure for table `assay`
 --
 CREATE DATABASE expression_atlas_cells2;
-USE expression_atlas_cells2;
+USE expression_atlas_cells;
 DROP TABLE IF EXISTS `assay`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -62,9 +62,10 @@ DROP TABLE IF EXISTS `cell`;
 CREATE TABLE `cell` (
   `cell_id` int(11) NOT NULL AUTO_INCREMENT,
   `cell_line` varchar(255) DEFAULT NULL,
-  `treated` varchar(255) DEFAULT NULL,
   `disease` varchar(255) DEFAULT NULL,
+  `treatment` varchar(255) DEFAULT NULL,
   `tissue_type` varchar(255) DEFAULT NULL,
+  `sub_cell` varchar(255) DEFAULT NULL,
   `organ_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`cell_id`),
   KEY `organ_id` (`organ_id`)
@@ -219,8 +220,7 @@ CREATE TABLE `project` (
   `PXD_accession` varchar(45) DEFAULT NULL,
   `experiment_type` varchar(255) DEFAULT NULL,
   `instrument` varchar(255) DEFAULT NULL,
-  `keywords` longtext CHARACTER SET utf8 NOT NULL,
-  `ref` varchar(255) DEFAULT NULL,
+  `pmid` varchar(255) DEFAULT NULL,
   UNIQUE KEY `project_id` (`project_id`,`PXD_accession`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1815 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -1,0 +1,152 @@
+557,Urine,Urine,Extracellular vesicles of the tissue were isolated,64,1
+559,Urine,Urine,Diseased,64,1
+589,Urine,Urine,No distinct annotation,64,1
+599,Urine,Urine,Cancer,64,1
+499,Urine,Urine,Healthy,64,1
+520,Urinary bladder,Urinary bladder,Cancer,63,0
+481,Urinary bladder,Urinary bladder,Healthy,63,0
+496,Ureter,Ureter,Healthy,62,0
+546,Unknown,Unknown,no distinct annotation,61,0
+455,Unknown,Unknown,Cell culture,61,0
+563,Umbilical cord,Umbilical cord,Healthy,60,0
+494,Umbilical cord,Umbilical vein,Cell culture,60,0
+585,Trophoblast,Trophoblast,Organoid,66,0
+558,Tooth,Tooth enamel,Healthy,59,0
+480,Testis,Testis,Healthy,56,0
+595,T-cells,T-cells,Cell culture,55,0
+460,T-cells,CD4 T-cells,Healthy,55,0
+461,T-cells,CD8 T-cell,Healthy,55,0
+510,Synovial tissue,Synovial tissue,Diseased,54,0
+594,Stomach,Stomach,Cancer,53,0
+490,Sputum,Sputum,Healthy,52,1
+491,Sputum,Sputum,Diseased,52,1
+479,Spinal cord,Spinal cord,Healthy,50,0
+550,Small intestine,Small intestine,Diseased,48,0
+466,Small intestine,Gut,Healthy,48,0
+515,Skin,Skin,Diseased,47,0
+519,Skin,Keratinocytes,Healthy,47,0
+533,Skin,Cerebral metastasis,Cancer,47,0
+551,Skin,Epithelial cell,Cell culture + cancer,47,0
+561,Skin,Fibroblast,Cancer,47,0
+581,Skin,Keratinocytes,Diseased,47,0
+583,Skin,Keratinocytes,Cancer,47,0
+584,Skin,Skin,Healthy,47,0
+586,Skin,Skin,Cancer,47,0
+502,Skin,Fibroblast,Healthy,47,0
+552,Skeletal muscle,Skeletal muscle,Healthy,46,0
+593,Skeletal muscle,Skeletal muscle,Cell culture,46,0
+556,Saliva,Saliva,Diseased,44,1
+560,Saliva,Saliva,Healthy,44,1
+596,Saliva,Saliva,Cell culture,44,1
+478,Retina,Retina,Healthy,43,0
+477,Rectum,Rectum,Healthy,42,0
+591,Prostate,Prostate,Cancer,41,0
+476,Prostate,Prostate,Healthy,41,0
+475,Placenta,Placenta,Healthy,40,0
+525,Peritoneal dialysis fluid,Peritoneal dialysis fluid,Healthy,38,1
+487,PBMC,PBMC,Healthy,37,0
+545,Parotid gland,parotid gland,Healthy,36,0
+524,Pancreas,Pancreatic islet,Healthy,35,0
+553,Pancreas,Pancreas,Cancer,35,0
+566,Pancreas,Pancreatic islet,Diseased,35,0
+570,Pancreas,Pancreas,Diseased,35,0
+474,Pancreas,Pancreas,Healthy,35,0
+544,Palatine tonsils,Palatine tonsils,Healthy,67,0
+549,Ovary,Ovary,Cancer,33,0
+569,Ovary,Ovary,Diseased,33,0
+473,Ovary,Ovary,Healthy,33,0
+509,Ovary,Ovary,Cell culture + cancer,33,0
+472,NK-cells,NK-cells,Healthy,32,0
+543,Nasal polyps,nasal polyps,Healthy,31,0
+576,Monocytes,Monocyte,Healthy,30,0
+471,Monocytes,Monocytes,Healthy,30,0
+582,Lymph node,Lymph node,Cancer,28,0
+498,Lymph node,Lymph node,Cell culture,28,0
+514,Lung,Lung,Diseased,27,0
+530,Lung,Lung,Cell culture,27,0
+564,Lung,Lung,Cell culture + cancer,27,0
+470,Lung,Lung,Healthy,27,0
+508,Lung,Lung,Cancer,27,0
+513,Liver,Liver,Diseased,26,0
+523,Liver,Liver,Cancer,26,0
+532,Liver,Liver,Extracellular vesicles of the tissue were isolated,26,0
+578,Liver,Liver,Cancer,26,0
+457,Liver,Liver,Cell culture,26,0
+469,Liver,Liver,Healthy,26,0
+516,Kidney,Kidney (glomeruli),Healthy,25,0
+517,Kidney,kidney (glomeruli),Healthy,25,0
+522,Kidney,Kidney,Cancer,25,0
+526,Kidney,Kidney (single tubules),Healthy,25,0
+528,Kidney,Kidney (podocytes),Healthy,25,0
+529,Kidney,Kidney (primary urinary cells),Healthy,25,0
+468,Kidney,Kidney,Healthy,25,0
+493,Kidney,Kidney,Cell culture,25,0
+565,Hela,Hela,Cell culture,24,0
+527,Heart,Heart,Diseased,23,0
+597,Heart,Heart,Unknown,23,0
+467,Heart,Heart,Healthy,23,0
+465,Gall bladder,Gall bladder,Healthy,22,0
+511,Follicular fluid,Follicular fluid,Healthy,21,1
+534,Eye,Anterior chamber of the eye,Healthy,19,0
+542,Eye,Vitreous humor,Diseased,19,0
+580,Eye,Retina,Cell culture,19,0
+590,Eye,Eye,Diseased,19,0
+603,Eye,Sclera,Healthy,19,0
+531,Esophagus,Esophagus,Cell culture + cancer,18,0
+463,Esophagus,Esophagus,Healthy,18,0
+486,Dental plaque,Dental plaque,Healthy,15,0
+512,Colon,Colon,Cancer,14,0
+521,Colon,Colon,Cancer,14,0
+535,Colon,Colon,Cell culture,14,0
+539,Colon,Colon,Extracellular vesicles of the tissue were isolated,14,0
+456,Colon,Colon,no distinct annotation,14,0
+462,Colon,Colon,Healthy,14,0
+547,Cervix,Cervix,Healthy,13,0
+548,Cervix,Cervix,Cancer,13,0
+568,Cerebrospinal fluid,Cerebrospinal fluid,Diseased,12,0
+575,Cerebrospinal fluid,Cerebrospinal fluid,Healthy,12,1
+500,Cerebrospinal fluid,Cerebrospinal fluid,Healthy,12,1
+505,Cerebrospinal fluid,Cerebrospinal fluid,Diseased,12,1
+492,Cartilage,Chondrocyte,Healthy,11,0
+495,Bronchoalveolar lavage,Bronchoalveolar lavage,Diseased,10,1
+483,Breast,Breast,Cancer (tissue near to Cancer),9,0
+484,Breast,Breast,Cancer (tissue far from Cancer),9,0
+485,Breast,Breast,Cancer,9,0
+541,Brain,Brain,Cell culture,8,0
+571,Brain,Substantia Nigra,Diseased,8,0
+572,Brain,Temporal Lobe,Diseased,8,0
+577,Brain,Substantia Nigra,Healthy,8,0
+579,Brain,Substantia nigra,Healthy,8,0
+602,Brain,Brain,No distinct annotation,8,0
+452,Brain,Brain,Healthy,8,0
+464,Brain,Frontal cortex,Healthy,8,0
+504,Brain,Brain,Diseased,8,0
+501,Bone,Bone,Healthy,7,0
+536,Blood,Blood plasma (EDTA),Healthy,5,1
+537,Blood,Blood plasma (with heparin added),Healthy,5,1
+538,Blood,Blood serum ,Healthy,5,1
+540,Blood,Blood platelet,Healthy,5,1
+554,Blood,Erythrocyte,Healthy,5,1
+555,Blood,Reticulocyte,Healthy,5,1
+567,Blood,Blood Plasma,Diseased,5,1
+573,Blood,Blood Plasma,Healthy,5,1
+574,Blood,Blood Serum,Healthy,5,1
+587,Blood,Microvessel,Healthy,5,1
+588,Blood,Microvessel,Diseased,5,1
+592,Blood,Blood plasma,Diseased,5,1
+598,Blood,Blood,Healthy,5,1
+601,Blood,Blood,Unknown,5,1
+453,Blood,Blood platelets,Healthy,5,1
+454,Blood,Blood,Healthy,5,1
+482,Blood,Blood plasma,Healthy,5,1
+488,Blood,Blood plasma,Diseased,5,1
+489,Blood,Neutrophil,Healthy,5,1
+497,Blood,Blood platelets,Diseased,5,1
+503,Blood,Blood,Diseased,5,1
+506,Blood,Blood serum,Diseased,5,1
+507,Blood,Blood serum,Healthy,5,1
+518,B-cells,B-cells,Healthy,4,0
+459,B-cells,B-cell,Healthy,4,0
+600,Ascites,Ascites,Cancer,65,1
+458,Adrenal gland,Adrenalgland,Healthy,2,0
+562,Adipose tissue,Adipose tissue,Healthy,1,0
