@@ -1,3 +1,4 @@
+-- Active: 1663853794403@@127.0.0.1@3306@expression_atlas_cells
 -- MySQL dump 10.13  Distrib 5.7.36, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: expression_atlas_cells
@@ -18,7 +19,7 @@
 --
 -- Table structure for table `assay`
 --
-CREATE DATABASE expression_atlas_cells2;
+CREATE DATABASE expression_atlas_cells;
 USE expression_atlas_cells;
 DROP TABLE IF EXISTS `assay`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;

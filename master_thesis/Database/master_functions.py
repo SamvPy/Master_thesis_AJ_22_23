@@ -5,6 +5,8 @@ import glob
 import os
 import csv
 import numpy as np
+import re
+import logging
 class dbf():
     '''A selection of functions used to maintain the expression_atlas_cells database.
     '''
@@ -20,6 +22,7 @@ class dbf():
             print("connection succesfull")
         else:
             print("no connection")
+        
 
     def check_new_project(self, new_projects: list):
         '''Accept a list of PXD-accession codes and checks whether they are already registered in the database. Returns "[]" if no duplicates have been found.'''
@@ -60,12 +63,26 @@ class dbf():
         for file in glob.glob("/home/compomics/mounts/*/*/PRIDE_DATA/" + str(pxd) + '/IONBOT_v*/*/' + str(raw) + '.mgf.gzip.ionbot.csv'):
             files.append(file)
         
+        if files == []:
+            for file in glob.glob("/home/compomics/mounts/*/*/PRIDE_DATA/" + str(pxd) + '/IONBOT_v*/' + str(raw) + '.mgf.ionbot.csv'):
+                files.append(file)
+
         if len(files) == 1:
             return files[0]
         
         if len(files) > 1:
-            return "multiple_paths"
+            versions = [file.split("/")[8] for file in files]
+            versions = [[int(version.split('.')[1]), int(version.split('.')[2])] for version in versions]
+            best = [0,0]
+            for version in versions:
+                if version[0] > best[0]:
+                    best[0], best[1] = version[0], version[1]
 
+                if version[0] == best[0]:
+                    if version[1] > best[1]:
+                        best[0], best[1] = version[0], version[1]
+            return files[versions.index(best)]
+            
         return np.nan
 
     def build_project_table(self, meta_df, list_of_pxds):
@@ -149,47 +166,105 @@ class dbf():
             count += 1
         print(count)
 
-    def ionbot_parse(self, file):
+    def id_regex(self, string):
+        uniprot_regex = re.compile('\(\([a-zA-Z0-9]+\)\)')
+        alt_uniprot_regex = re.compile('\(\([a-zA-Z0-9\|_-]+\)\)')
+        protID = uniprot_regex.search(string)
+        
+        if protID == None: 
+            protID = alt_uniprot_regex.findall(string)
+            
+            if len(protID) != 2:
+                logging.warning(f"{string} does not match regex.")
+                return np.nan
+
+            protID = protID[1]
+            
+            if protID[2:5] == "sp|":
+                return protID[5:-2]
+            else:
+                return protID[2:-2]
+        
+        return protID.group()[2:-2]
+
+    def ionbot_parse(self, file, version):
         df = pd.read_csv(file, sep=',')
+        
+        if df.empty:
+            logging.debug(f"{file.split('/')[-1]} is empty.")
+
         # best_psm is equal to 1
         df = df.loc[df['best_psm'] == 1]
         #  q-value-best <= 0.01
         df = df.loc[df['q_value'] <= 0.01]
         # DB column needs to contain 'T' (otherwise decoy hit) +  extra check: only retain swissprot entries (start with sp)
         df = df.loc[df['DB'] == 'T']
-        df_validated = df[df['proteins'].astype(str).str.startswith('sp')]
-        # remove peptides that are not uniquely identified and are linked to multiple proteins = containing || in proteins
-        x = '||'
-        # regex is False otherwise it also detects a single | which is in every protein present
-        df_validated = df_validated[~df_validated['proteins'].str.contains(x, regex=False)]
+
+        if df.empty:
+            logging.debug(f"{file.split('/')[-1]} lowest q-value: {pd.read_csv(file, sep = ',').q_value.min()}")
+            return False
+
+        #Only supports versions 
+        versions = "IONBOT_v0.6.2 IONBOT_v0.6.3 IONBOT_v0.7.0 IONBOT_v0.8.0".split()
+        if version not in versions:
+            logging.debug(f"{file} not supported by versions {versions}")
+            return False
+
+        if version in ["IONBOT_v0.6.2", "IONBOT_v0.6.3"]:
+
+            df_validated = df[df['proteins'].astype(str).str.startswith('sp')]
+            # remove peptides that are not uniquely identified and are linked to multiple proteins = containing || in proteins
+            x = '||'
+            # regex is False otherwise it also detects a single | which is in every protein present
+            df_validated = df_validated[~df_validated['proteins'].str.contains(x, regex=False)]
+            #Reformat proteins to uniprotID
+
+            if df_validated.empty:
+                logging.debug(f"{file.split('/')[-1]}: no proteins after excluding duplicates.")
+                return False
+
+            df_validated["proteins"] = df_validated.apply(lambda x: x["proteins"].split('|')[1], axis = 1)
+        
+        elif version in ["IONBOT_v0.7.0", "IONBOT_v0.8.0"]:
+            x = "||"
+            df_validated = df[~df['proteins'].str.contains(x, regex = False)]
+
+            if df_validated.empty:
+                logging.debug(f"{file.split('/')[-1]}: no proteins after excluding duplicates.")
+                return False
+
+            df_validated["proteins"] = df_validated.apply(lambda x: self.id_regex(x["proteins"]), axis = 1)
+            df_validated = df_validated[df_validated["proteins"].notna()]
+
         # check not all entries were removed
         if df_validated.empty:
             return False
-
         # modifications can be linked to unimod id: peptide_modifications: unimod ID vs peptide
-
         # calculte the spectral counts from each peptide: dict: count
         peptides = df_validated['matched_peptide'].tolist()
         spectral_counts = defaultdict(int)
         for pep in peptides:
             spectral_counts[pep] += 1
         spectral_counts = dict(sorted(spectral_counts.items(), key=lambda item: item[1], reverse=True))
-        print('parsed check')
+        logging.info(f'{file.split("/")[-1]}\n#proteins: {len(df_validated.proteins.unique())}')
+        #logging.info('parsed check')
         return df_validated, spectral_counts
 
     def ionbot_store(self, file, filename):
         #check if the assay isn't already in the assay table
+        version = filename.split('/')[8]
         filename = filename.split('/')[-1].split('.')[0]
 
         self.mycursor.execute("SELECT assay_id FROM assay WHERE filename = %s", (filename,))
         assayIDtup = self.mycursor.fetchone()
         if assayIDtup is None:
-            print('{} is not in assays'.format(filename))
+            logging.info(f'{filename} is not in assays.')
             return
         (assayID,) = assayIDtup
-        parser = self.ionbot_parse(file)
+
+        parser = self.ionbot_parse(file, version=version)
         if parser is False:
-            print(f"parser failed for {filename}.")
+            logging.warning(f"parser failed for {filename}.")
             return
         df_validated, spectral_counts = parser
 
@@ -216,7 +291,7 @@ class dbf():
 
             # link uniProtID = protein in assay to peptide
             proteinID = "INSERT INTO protein(uniprot_id) VALUES (%s) ON DUPLICATE KEY UPDATE uniprot_id=uniprot_id"
-            uniprotID = (protID.split('|')[1],)
+            uniprotID = (protID,)
             self.mycursor.execute(proteinID, uniprotID)
             self.conn.commit()
 
@@ -260,10 +335,13 @@ class dbf():
             peptideID_assayID_count = (pepID, assayID, count)
             self.mycursor.execute(peptideToAssay, peptideID_assayID_count)
             self.conn.commit()
-        print('{} was stored'.format(filename))
+        logging.info(f'{filename} was stored')
 
     def find_ionbot_files(self, df: pd.DataFrame):
         """df must contain file_path column with the paths to the .ionbot.csv file"""
+        
+        logging.basicConfig(filename='ionbot_assays.log', level=logging.DEBUG)
+
         file_paths = df.file_path.tolist()
         number_of_files = 0
         for file in file_paths:
