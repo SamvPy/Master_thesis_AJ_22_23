@@ -55,6 +55,40 @@ class dbf():
         print("Following cell lines still need annotation: ", no_entry)
         return excel_annotation_file
 
+    def find_pxd_path(self, pxds: list, return_path = False):
+        '''Given a list of pxds, this function searches the compomics directories for the pxd directory and returns the pxds it finds
+        
+        If return path is set to True, returns (x,y,z)
+        
+        - x = list of pxd that were found
+        - y = dictionary of path: amount of files
+        - z = ionbot version paths'''
+        
+        path_found = []
+        version_path = []
+        file_output = {}
+        pxd_found = []
+        for pxd in pxds:
+            for path in glob.glob("/home/compomics/mounts/*/*/PRIDE_DATA/" + str(pxd)):
+                if pxd not in pxd_found:
+                    pxd_found.append(pxd)
+                path_found.append(path)
+        
+        flag = False
+        for path in path_found:
+            count = 0
+            for version in glob.glob(path + '/IONBOT_v*/*'):
+                if count == 0:
+                    version_path.append("/".join(version.split('/')[0:-1]))
+                count += 1
+            
+            file_output[path] = count
+
+        print(f"Found {len(pxd_found)} out of {len(pxds)}.")
+        if not return_path:
+            return pxd_found
+        return pxd_found, file_output, version_path
+
     def find_file_path(self, pxd, raw):
         '''Used in pd.apply as function to return the path of a given RAW-file. If more paths are present, returns the string "multiple_paths"'''
 
