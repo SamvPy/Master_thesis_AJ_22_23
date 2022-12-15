@@ -211,12 +211,13 @@ def project_F1_score(Y_true: pd.Series, Y_pred: np.ndarray, project_ids: pd.Seri
 
 
 class GridSearchProjectF1():
-    def __init__(self, clf: SVC, grid: dict, cv: StratifiedKFold):
+    def __init__(self, clf: SVC, grid: dict, cv: StratifiedKFold, scaling = False):
         '''Will perform gridsearch with the adapted F1 score metric which normalizes the f1 scores for each project'''
 
         self.clf = clf
         self.grid = grid
         self.cv = cv
+        self.scaling = scaling
 
     def fit(self, X_train: pd.DataFrame, Y_train: pd.Series, project_labels: pd.Series):
         # Iterate over every combination of parameters
@@ -234,12 +235,23 @@ class GridSearchProjectF1():
             X_test = X_train.iloc[test,:].reset_index(drop = True)
             Y_test = Y_train.iloc[test].reset_index(drop = True)
             project_ids = project_labels.iloc[test].reset_index(drop = True)
+            
+            if self.scaling:
+                scaler = StandardScaler()
+                scaler = scaler.fit(X_val)
+                X_val = scaler.transform(X_val)
+                X_test = scaler.transform(X_test)  
 
             # Iterate over the parameters
             fold_scores = {}
             for params in ParameterGrid(self.grid):
                 clf = self.clf.set_params(**params)
-                clf.fit(X_val, Y_val)
+                
+                try:
+                    clf.fit(X_val, Y_val)
+                except:
+                    continue
+                
                 Y_pred = clf.predict(X_test)
                 
                 # Calculate costum f1-score for each parameter and save them in dictionary {parameter: score} 
@@ -253,10 +265,19 @@ class GridSearchProjectF1():
         print(f"Gridsearch scores: {best_score.values()}")
         best_fold = max(best_score, key = best_score.get)
         self.best_params_ = best_param[best_fold]
+
+        # Rescale utilizing the train and validation sets and save the scaler for the outer test samples
+        if self.scaling:
+            self.outer_scaler = StandardScaler()
+            self.outer_scaler = scaler.fit(X_train)
+            X_train = self.outer_scaler.transform(X_train)
+                    
         self.clf = self.clf.set_params(**params).fit(X_train, Y_train)
 
     def predict(self, X_test):
         """Predict the label for an unknown test set. The model with the best parameters is used to predict the labels."""
+        if self.scaling:
+            X_test = self.outer_scaler.transform(X_test)
         return self.clf.predict(X_test)
 
 
@@ -470,7 +491,7 @@ class ModelModule():
         pass
 
     def nested_grid_search(self, filtered: bool, model_names: list, splitting_procedure: set, gridsearch_scoring: str, name_results_file: str,
-                    outerloop_scoring: Tuple[str] = None, outerloop_cv = 5, innerloop_cv = 5):
+                    scaling: bool, outerloop_cv = 5, innerloop_cv = 5):
         '''Nested cross validation grid search on dataset
 
         - model_names: The models that should be used with the grids that were initiated earlier.
@@ -550,7 +571,7 @@ class ModelModule():
                     gridsearch.fit(X_train, Y_train)
 
                 else:
-                    gridsearch = GridSearchProjectF1(clf, grid = grid, cv = inner_splitter)
+                    gridsearch = GridSearchProjectF1(clf, grid = grid, cv = inner_splitter, scaling = scaling)
                     gridsearch.fit(X_train, Y_train, train_project_labels)
 
                 Y_pred = gridsearch.predict(X_test)
@@ -567,7 +588,7 @@ class ModelModule():
         
         print(f"Grid search done. See the results in results/gs_{name_results_file}.csv")
 
-    def compare_models(self, dataset_type: str, models: list, splitting_procedure: StratifiedKFold, name_results_file: str, filter_trainset_only = False, percentage_reoccurence: int = None):
+    def compare_models(self, dataset_type: str, models: list, scaling: bool, splitting_procedure: StratifiedKFold, name_results_file: str, filter_trainset_only = False, percentage_reoccurence: int = None):
         """Models: Algorithms to be used provided in a list, with all parameters provided
         
         if models = "init", use the initialized models instead.
@@ -608,6 +629,12 @@ class ModelModule():
                     X_train, _, _ = reoccurence_filtering(X_train, Y_train, percentage_reoccurence=percentage_reoccurence, how = "global",
                                 drop_missing_protein_columns=True)
                     X_test = X_test.loc[:, X_test.columns.isin(X_train.columns)]
+
+                if scaling:
+                    scaler = StandardScaler()
+                    scaler = scaler.fit(X_train)
+                    X_train = scaler.transform(X_train)
+                    X_test = scaler.transform(X_test)
 
                 clf.fit(X_train, Y_train)
 
