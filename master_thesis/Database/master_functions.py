@@ -168,7 +168,7 @@ class dbf():
         print(f"{count} entries added in table 'cell'.")
 
     def build_assay_cell_table(self, assay_df):
-        '''assay_df must have columns of accession, filename, useable, cell_line, disease, tissue_type, treatment, sub_cell'''
+        '''assay_df must have columns of PXD, RAW, Useable, cell_line, disease, tissue_type, treatment, sub_cell'''
         count = 0
         assay_df = assay_df["PXD RAW Useable cell_line disease tissue_type treatment sub_cell".split()]
         assay_tuples = list(assay_df.to_records(index = False))

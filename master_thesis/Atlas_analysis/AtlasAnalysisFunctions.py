@@ -9,7 +9,6 @@ from sklearn.model_selection import StratifiedKFold, GridSearchCV, ParameterGrid
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from xgboost import XGBClassifier
 from sklearn.metrics import f1_score
 from sklearn.linear_model import LogisticRegression
 import pandas as pd
