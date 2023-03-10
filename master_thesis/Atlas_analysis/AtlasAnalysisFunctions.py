@@ -11,10 +11,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.metrics import f1_score
 from sklearn.linear_model import LogisticRegression
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import numpy as np
 import random
 
 # Ignore following warning: 
@@ -322,7 +318,6 @@ class ProjectBasedSplit():
         
     def train_test_project_split(self, dataset, metadata: pd.DataFrame, groups = None):
 
-        
         pxds = metadata.PXD_accession.unique()
         n_samples = len(dataset)
         random.shuffle(pxds)
