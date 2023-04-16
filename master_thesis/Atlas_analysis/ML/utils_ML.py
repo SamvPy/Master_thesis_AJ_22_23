@@ -15,7 +15,7 @@ import pandas as pd
 # based on: https://towardsdatascience.com/coding-a-custom-imputer-in-scikit-learn-31bd68e541de
 
 # Filtering reoccuring proteins functions
-def _identify_global_reoccured_proteins(subset: pd.DataFrame, percentage_reoccurence):
+def _identify_global_reoccured_proteins(subset, percentage_reoccurence):
     '''Returns protein_ids that reoccur in >= percentage_reoccurence of the subset
     
     Also returns protein_ids that are filtered out as second term'''
@@ -34,7 +34,7 @@ def _identify_global_reoccured_proteins(subset: pd.DataFrame, percentage_reoccur
 # Splitter
 # Index must be 0-n_samples bcz prob index is taken with iloc instead of loc
 class ProjectBasedSplit():
-    def __init__(self, splits: int, metadata: pd.DataFrame, on = str):
+    def __init__(self, splits, metadata, on = str):
         """Called when training model and splitting_procedure is set as 'project'
         
         metadata: the metadata table that is used to generate splits
@@ -60,7 +60,7 @@ class ProjectBasedSplit():
 
             yield train_index, test_index
         
-    def train_test_project_split(self, dataset, metadata: pd.DataFrame, groups = None):
+    def train_test_project_split(self, dataset, metadata, groups = None):
 
         indices = list(range(15))
         random.shuffle(indices)
@@ -73,8 +73,15 @@ class ProjectBasedSplit():
                 continue
             if len(PXD) > 1:
                 choosen_PXD.append(random.choice(PXD))
+
+            # All classes must be in the training set
             if self.metadata[~self.metadata.PXD_accession.isin(choosen_PXD)].groupby(self.label).PXD_accession.nunique().shape[0] != 15:
                 choosen_PXD = choosen_PXD[:-1]
+            
+            # Condition needed to oversample (at least 3 neighbours of the class)
+            if (self.metadata[~self.metadata.PXD_accession.isin(choosen_PXD)].Group.value_counts() < 4).sum() > 0:
+                choosen_PXD = choosen_PXD[:-1]
+                
             if len(choosen_PXD) == 5:
                 break
 
@@ -125,7 +132,7 @@ class FilterByOccurence(BaseEstimator, TransformerMixin):
     def __init__(self, percentage=.5):
         self.percentage = percentage
 
-    def fit(self, X: pd.DataFrame, y = None):
+    def fit(self, X, y = None):
         proteins, _ = _identify_global_reoccured_proteins(X.fillna(0), self.percentage)
         
         self.filtered_proteins = proteins
@@ -133,7 +140,7 @@ class FilterByOccurence(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X: pd.DataFrame, y=None):
+    def transform(self, X, y=None):
         check_is_fitted(self, 'filtered_proteins')
 
         return X.loc[:, self.filtered_proteins]
@@ -150,7 +157,7 @@ class FilterByClass(BaseEstimator, TransformerMixin):
         self.filter_per_class = {}
         self.percentage = percentage
 
-    def fit(self, X: pd.DataFrame, y = False):
+    def fit(self, X, y = False):
         assert y.any()
 
         reoccuring_proteins = []
@@ -169,7 +176,7 @@ class FilterByClass(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X: pd.DataFrame, y=False):
+    def transform(self, X, y=False):
         check_is_fitted(self, 'filtered_proteins')
 
         if self.keep:
@@ -217,7 +224,7 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
             if selector == "MI":
                 self.selector_models.append(SelectKBest(mutual_info_classif, k = self.num_features))
             if selector == "LR":
-                self.selector_models.append(SelectFromModel(LogisticRegression(penalty="l1", solver = "liblinear", multi_class="ovr"), max_features=500))
+                self.selector_models.append(SelectFromModel(LogisticRegression(penalty="l1", solver = "liblinear", multi_class="ovr"), max_features=self.num_features))
             if selector == "SVC":
                 self.selector_models.append(RFE(SVC(class_weight="balanced", kernel = "linear"), n_features_to_select=self.num_features, step=500))
 
@@ -231,7 +238,7 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         final_mask = votes >= self.threshold
         self.final_mask = final_mask
 
-        print(f"Selected {sum(final_mask)} features.")
+        # print(f"Selected {sum(final_mask)} features.")
 
         return self
 
@@ -251,12 +258,17 @@ def scoring_functions(Y_pred, Y_test, labels):
     
     return micro_f1, macro_f1, weighted_f1, cm
 
-def save_results(df: pd.DataFrame, name_file: str):
+def save_results(df, name_file):
     """Writes results away to a file"""
     try:
-        file = pd.read_csv(f"results/{name_file}.csv", sep = ";")
+        file = pd.read_csv("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/ML/results/{}.csv".format(name_file), sep = ";")
         df = pd.concat([file, df], ignore_index = True)
-        df.to_csv(f"results/{name_file}.csv", sep = ";", index=False)
+        df.to_csv("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/ML/results/{}.csv".format(name_file), sep = ";", index=False)
     except:
-        df.to_csv(f"results/{name_file}.csv", sep = ";", index=False)
+        df.to_csv("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/ML/results/{}.csv".format(name_file), sep = ";", index=False)
 
+def main():
+    return
+
+if __name__ == '__main__':
+    main()
