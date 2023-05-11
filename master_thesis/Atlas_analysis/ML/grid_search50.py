@@ -3,6 +3,7 @@ import utils_ML as uml
 import pandas as pd
 import numpy as np
 
+from lightgbm import LGBMClassifier as lgbm
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, LabelEncoder, MinMaxScaler, normalize
 from sklearn.utils.class_weight import compute_class_weight
@@ -12,49 +13,65 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.utils.fixes import loguniform
 
 from imblearn.combine import SMOTEENN, SMOTETomek
-
+from imblearn.over_sampling import SMOTE
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils
 import torch.distributions
 
+import vae_utils as vae_utils
 device = 'cuda' if torch.cuda.is_available() else "cpu"
 
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold
+from lightgbm import LGBMClassifier as lgbm
 
 
 def main():
     # Machine learning classification loop
 
     # read data
+    skf = StratifiedKFold(n_splits=10, shuffle=True)
+
     print("Reading data...")
-    data = pd.read_csv("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/PEMatrix/norm_NSAF_data2.csv", index_col = "assay_id")
-
-    # Only keep proteins identified in 50% of samples
-    data = uml.FilterByOccurence(.5).fit_transform(data)
-
+    data_quantile = pd.read_csv("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/quantile_norm_NSAF_50.csv", index_col = "assay_id")
+    protein_columns = data_quantile.columns
     meta = pd.read_csv("/home/compomics/Sam/git/python/master_thesis/Metadata/unified_metadata.csv")
-    meta = meta[meta.assay_id.isin(data.index)]
-
+    meta = meta[meta.assay_id.isin(data_quantile.index)]
     groups = pd.read_csv("/home/compomics/Sam/git/python/master_thesis/Metadata/group_cells_annotation.csv", sep =";", index_col="Unnamed: 0")
     meta["Group"] = meta.cell_line.apply(lambda x: groups[groups.cell_line == x]["group"].values[0])
     meta = meta.set_index("assay_id")
 
-    data.sort_index(inplace=True)
+    data_quantile.sort_index(inplace=True)
     meta.sort_index(inplace=True)
+
+    with open("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/selected_features.txt", "r") as f:
+        features = f.readlines()
+        features = [x.strip() for x in features]
+    data_quantile = data_quantile.loc[:, features]
+
+    data_quantile = data_quantile.reset_index(drop=True).rename(columns={data_quantile.columns[x]:x for x in range(len(data_quantile.columns))})
+
 
     target_encoder = LabelEncoder()
     targets = target_encoder.fit_transform(meta.Group)
     unique_labels = pd.Series(targets).unique()
-
     class_weights = compute_class_weight(class_weight='balanced', classes=unique_labels, y=targets)
 
     weights = {unique_labels[i]: class_weights[i] for i in range(len(unique_labels))}
+    print(weights)
+
+    vae = vae_utils.VariationalAutoencoder(6, 161, 50)
+    vae.load_state_dict(torch.load("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/VAE_model_filtered"))
+
+    lr_clf = LogisticRegression(max_iter=10000)
+    svm_clf = SVC()
+    rf_clf = RandomForestClassifier()
+    lgbm_clf = lgbm()
+    models = [lr_clf, svm_clf, rf_clf, lgbm_clf]
 
     # Models to be used:
     print("Initializing models and grids...")
@@ -62,103 +79,95 @@ def main():
     rf_clf = RandomForestClassifier()
     lr_l1_clf = LogisticRegression(max_iter = 10000)
     lr_l2_clf = LogisticRegression(max_iter = 10000)
-    gnb_clf = GaussianNB()
-
+    lgbm_clf = lgbm()
     # Parameter grids
     lr_l1_grid = {"penalty" : ['l2'],
                 "dual": [False],
                 "max_iter": [10000],
-                "class_weight": [weights, None],
+                "class_weight": [None],
                 "C": loguniform(.001, 1e2),
-                'solver': ['newton-cg', 'sag', 'lbfgs', "liblinear"]}
+                'solver': ["liblinear"]}
 
     lr_l2_grid = {"penalty" : ['l1'],
                 "dual": [False],
                 "max_iter": [10000],
-                "class_weight": [weights, None],
+                "class_weight": [None],
                 "C": loguniform(.001, 1e2),
                 'solver': ["liblinear"]}
 
     svc_grid = {'decision_function_shape': ["ovr"],
                 "kernel": ['linear', 'poly', 'rbf'],
                 "C": loguniform(.001, 1e2),
-                "class_weight": [weights,None]}
+                "class_weight": [None]}
 
     rf_grid = {'n_estimators': np.linspace(10, 200, 100, dtype = int),
                 "criterion": ["entropy", "gini"], 
-                "max_depth": [5,10,15,20,40, None],
-                "class_weight": [weights,None]}
+                "max_depth": [5,10,15,20],
+                "class_weight": [None]}
 
-    gnb_grid = {'var_smoothing': np.logspace(0,-15,100)}
+    lgbm_grid = {'learning_rate': [0.005, 0.01],
+                 'boosting_type': ["gbdt", "dart"],
+                 'n_estimators': [8,16,24, 50],
+                 'min_data_in_leaf': [3,5,7,10],
+                 'max_depth': [5,10,15,20]}
 
     model_grids = {"lr1": (lr_l1_clf ,lr_l1_grid), "lr2":(lr_l2_clf, lr_l2_grid), 
-                "svc": (svc_clf, svc_grid), "rf": (rf_clf, rf_grid), "gnb": (gnb_clf, gnb_grid)}
+                "svc": (svc_clf, svc_grid), "rf": (rf_clf, rf_grid), "lgbm": (lgbm_clf, lgbm_grid)}
 
-    # Reoccuring protein selector
-    preprocessor1 = Pipeline(steps=[
-        ('filtering', uml.FilterByClass(keep=True, percentage=.75)),
-        ('imputation', uml.LowestValueImputer()),
-        ('scaler', MinMaxScaler()),
-    ])
-
-    preprocessor2 = Pipeline(steps=[
-        ('LowestValueImputer', uml.LowestValueImputer()),
-        ('scaler', MinMaxScaler()),
-        ('feature_selection', uml.FeatureSelector(selectors= ['LR', "MI", 'SVC'], num_features=1000, threshold=.5))
-    ])
 
     skf = StratifiedKFold(n_splits=5, shuffle=True)
 
     fold=0
 
     print("Starting outer loop... (5 folds)")
-    print("Data shape:", data.shape)
+    print("Data shape:", data_quantile.shape)
 
-    for train, test in skf.split(X=data, y=targets):
+    for train, test in skf.split(X=data_quantile, y=targets):
         fold += 1
         print(fold)
         # Split data
-        X_train = data.iloc[train,:]
+        X_train_quantile = data_quantile.iloc[train,:].reset_index(drop=True)
+        X_test_quantile = data_quantile.iloc[test,:].reset_index(drop=True)
+
         Y_train = targets[train]
-        X_test = data.iloc[test,:]
         Y_test = targets[test]
 
         # Preprocess
-        preprocessor1.fit(X_train, Y_train)
-        X_train_preprocessed1 = preprocessor1.transform(X_train)
-        X_test_preprocessed1 = preprocessor1.transform(X_test)
+        print("Imputing...")
+        #imputer = uml.MNAR_MCAR_Imputer(max_iter=15)
+        imputer = uml.LowestValueImputerGaussian()
+        imputer.fit(X_train_quantile, Y_train)
+        imputed_train = imputer.transform(X_train_quantile, Y_train)
+        imputed_test = imputer.transform(X_test_quantile)
 
-        print("Train shape: ", X_train_preprocessed1.shape)
-        print("Test shape: ", X_test_preprocessed1.shape)
-        print(fold, ': Preprocessed 1/2')
+        quant_scaler = MinMaxScaler()
+        scaled_train = quant_scaler.fit_transform(imputed_train)
+        scaled_test = quant_scaler.transform(imputed_test)
+        scaled_train = scaled_train.astype("float32")
+        scaled_test = scaled_test.astype("float32")
 
-        preprocessor2.fit(X_train, Y_train)
-        X_train_preprocessed2 = preprocessor2.transform(X_train)
-        X_test_preprocessed2 = preprocessor2.transform(X_test)
-        print("Train shape: ", X_train_preprocessed2.shape)
-        print("Test shape: ", X_test_preprocessed2.shape)
-        print(fold, ': Preprocessed 2/2')
+        # Oversampling
+        print("Oversampling...")
+        smote = SMOTE()
+        smote_quant, smote_y = smote.fit_resample(scaled_train, Y_train)
 
-        # Oversample on training set
-        X_train_oversampled1, Y_train_oversampled1 = SMOTETomek().fit_resample(X_train_preprocessed1, Y_train)
-        X_train_oversampled2, Y_train_oversampled2 = SMOTETomek().fit_resample(X_train_preprocessed2, Y_train)
         print(fold, ': Oversampled')
 
         for key, (model, grid) in model_grids.items():
             
             print("Starting gridsearch for", key)
             # Hyperparameter tuning on the training set with nested cv
-            clf = RandomizedSearchCV(model, grid, n_iter=10, scoring = "f1_macro", verbose = 3)
-            search1 = clf.fit(X_train_oversampled1, Y_train_oversampled1)
+            if type(model).__name__ == "LGBMClassifier":
+                continue
+            
+            clf = RandomizedSearchCV(model, grid, n_iter=50, scoring = "f1_macro", verbose = 3)
+            search1 = clf.fit(smote_quant, smote_y)
             print(fold, ': grid_search 1/2; score: ', search1.best_score_)
 
-            clf2 = RandomizedSearchCV(model, grid, n_iter=10, scoring = "f1_macro", verbose = 3)
-            search2 = clf2.fit(X_train_oversampled2, Y_train_oversampled2)
-            print(fold, ': grid_search 2/2; score: ', search2.best_score_)
             
             # Predict with optimized hyperparameters
-            Y_pred1 = search1.best_estimator_.predict(X_test_preprocessed1)
-            Y_pred2 = search2.best_estimator_.predict(X_test_preprocessed2)
+            Y_pred1 = search1.best_estimator_.predict(scaled_test)
+
 
             # Compute scores and save
             micro_f1, macro_f1, weighted_f1, cm = uml.scoring_functions(Y_pred=Y_pred1, 
@@ -168,24 +177,11 @@ def main():
             results_df = pd.DataFrame({"model": [type(model).__name__], "fold": [fold], 
                                             "micro_f1": [micro_f1], 'cv_macro_f1': [search1.best_score_],
                                             "macro_f1": [macro_f1], "weighted_f1": [weighted_f1] ,"cm": [cm], 
-                                            "preprocessor": ["class_based"], 'best_params': [search1.best_params_],
-                                            'proteins_selected': [X_train_preprocessed1.shape[1]],
-                                            "oversampler": ["SMOTETomek"]})
+                                            'best_params': [search1.best_params_],
+                                            "oversampler": ["SMOTE"]})
                 
-            uml.save_results(results_df, "grid_search50") 
+            uml.save_results(results_df, "grid_search_new") 
 
-            micro_f1, macro_f1, weighted_f1, cm = uml.scoring_functions(Y_pred=Y_pred2, 
-                                                                        Y_test=Y_test,
-                                                                        labels=unique_labels)       
-            
-            results_df = pd.DataFrame({"model": [type(model).__name__], "fold": [fold], 
-                                            "micro_f1": [micro_f1], 'cv_macro_f1': [search2.best_score_],
-                                            "macro_f1": [macro_f1], "weighted_f1": [weighted_f1] ,"cm": [cm], 
-                                            "preprocessor": ["cpu"], 'best_params': [search2.best_params_], 
-                                            'proteins_selected': [X_train_preprocessed2.shape[1]],
-                                            "oversampler": ["SMOTETomek"]})
-                
-            uml.save_results(results_df, "grid_search50")     
 
             print("Saved results")
 
