@@ -1,0 +1,80 @@
+;cell_line;count;description;group
+0;CRC;65;colorectal cancer cells;CRC
+1;HeLa;60;Human papillomavirus-related endocervical adenocarcinoma;HeLa
+2;MCF7;43;ductal breast adenocarcinoma;Ductal_breast
+3;SKNBE2;24;neuroblastoma from bone marrow metasttic site;Neuroblastoma
+4;A431;24;Skin squamous cell carcinoma;SCC
+5;HUVEC;24;Human umbilical vein endothelial cells;HUVEC
+6;SHSY5Y;20;neuroblastoma from bone marrow metasttic site;Neuroblastoma
+7;iPSC;19;iPSC;iPSC
+8;THP1;18;Childhood acute monocytic leukemia;Myeloid_leukemia
+9;HEK293;15;human embryonic kindey cell line (immortalized);HEK293
+10;ZR751;14;epithelial breast ductal carcinoma;Ductal_breast
+11;A2780;14;Ovarian endometrioid adenocarcinoma;OV_endometrioid
+12;U87;12;glioblastoma;glioblastoma
+13;/;12;glioblastoma (U-87, T98G, and LNT-229);glioblastoma
+14;JVM13;6;Mantle cell lymphoma;Lymphoid_leukemia
+15;ME180;6;Human papillomavirus-related cervical squamous cell carcinoma;ME180
+16;IGROV1;6;Ovarian endometrioid adenocarcinoma;OV_endometrioid
+17;TOV112D;6;Ovarian endometrioid adenocarcinoma;OV_endometrioid
+18;MHCC97;6;hepatocellular carcinoma;HCC
+19;HepG2;5;hepatocelllular carcinoma (although maybe a hepatoblastoma?);HCC
+20;A549;5;lung adenocarcinoma human alveolar basal epithelial cells;Lung
+21;HCT116;5;colorectal carcinoma epithelial morphology;CRC
+22;HT29;4;colorectal adenocarcinoma epithelial morphology;CRC
+23;LAN5;4;neuroblastoma from bone marrow metasttic site;Neuroblastoma
+24;PC3;4;prostate carcinoma;PC3
+25;HCC1143;4;invasive ductal breast carcinoma;Ductal_breast
+26;BT20;4;Invasive breast carcinoma of no special type (ductal);Ductal_breast
+27;HCC1599;4;ductal breast adenocarcinoma;Ductal_breast
+28;DU4475;4;epithelial breast ductal carcinoma;Ductal_breast
+29;BT549;4;Invasive breast carcinoma of no special type (papillary ductal);Ductal_breast
+30;MDA-MB-231;4;breast adenocarcinoma (epithelial);Ductal_breast
+31;TYKNUCP;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+32;CAOV3;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+33;JHOS4;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+34;OVISE;3;Ovarian clear cell adenocarcinoma;OVISE
+35;IOSE397;3;ovarian surface epithelium cancer cell;IOSE397
+36;DOV13;3;epithelial ovarian cancer cell adenocarcinoma;DOV13
+37;IOSE7576;3;ovarian surface epithelium cancer cell;IOSE7576
+38;SKBR3;3;invasive ductal carcinoma;Ductal_breast
+39;K562;3;Chronic myeloid leukemia;Myeloid_leukemia
+40;SNU119;3;High grade ovarian serous adenocarcinoma;HGSOC
+41;PEO1;3;Ovarian cystadenocarcinoma;ovarian_cystadenocarcinoma
+42;PEO4;3;Ovarian cystadenocarcinoma;ovarian_cystadenocarcinoma
+43;OVCAR3;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+44;Jurkat;3;Childhood T acute lymphoblastic leukemia;Lymphoid_leukemia
+45;59M;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+46;SKOV3IP1;3;Ovarian serous cystadenocarcinoma;ovarian_cystadenocarcinoma
+47;OVSAHO;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+48;JHOS2;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+49;OVKATE;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+50;COV318;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+51;KURAMOCHI;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+52;TYKNU;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+53;OVCAR5;3;High grade ovarian serous adenocarcinoma (epithelial);HGSOC
+54;HEY;3;High grade ovarian serous adenocarcinoma;HGSOC
+55;OVCA433;3;ovarian serous adenocarcinoma (epithelial);OVCA433
+56;MCF10F;2;epithelial, myoepithelial fibrocystic mammary gland disease;MCF10F
+57;MDA-MB-436;2;invasive breast carcinoma of no special type (mammary gland);Ductal_breast
+58;HCC1806;2;breast acantholytic squamous cell carcinoma, grade2;SCC
+59;MDA-MB-453;2;metastatic epithelial mammary gland carcinoma;Ductal_breast
+60;SW527;2;colon adenocarcinoma (~SW480 contaminant);CRC
+61;MDA-MB-157;2;breast mammary epithelial gland medullary carcinoma;Ductal_breast
+62;KO52;2;acute myeloid leukemia;Myeloid_leukemia
+63;hESC;2;human embryonic stem cell;hESC
+64;HS578T;2;breast mammary epithelial gland carcinoma (no specific type;Ductal_breast
+65;Hep3B;2;childhood hepatocellular carcinoma;HCC
+66;HCC38;2;breast ductal gland carcinoma  stage2B (grade 3);Ductal_breast
+67;HCC1937;2;breast ductal carcinoma stage2B (grade 3);Ductal_breast
+68;MFM223;2;breast carcinoma (ductal, grade 3, epithelial like);Ductal_breast
+69;MDA-MB-468;2;breast adenocarcinoma (epithelial like);Ductal_breast
+70;M14;1;amelanotic melanoma from hypodermis;Skin_cancer
+71;KM12;1;colon carcinoma;CRC
+72;RXF-393;1;renal cell carcinoma;RXF-393
+73;U251;1;astrocytoma;U251
+74;SKOV3;1;ovarian serous cystadenocarcinoma from ascites;ovarian_cystadenocarcinoma
+75;NCI-H460;1;lung large cell carcinoma from pleural effusiong;Lung
+76;Colo-205;1;colon adenocarcinoma from ascites metastatic site;CRC
+77;CCRF-CEM;1;Childhood T acute lymphoblastic leukemia;Lymphoid_leukemia
+78;A375;1;amelanotic melanoma;Skin_cancer
