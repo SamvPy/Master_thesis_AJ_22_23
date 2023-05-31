@@ -98,14 +98,6 @@ def main():
 
     vae = vae_utils.VariationalAutoencoder(6, 161, 50)
     vae.load_state_dict(torch.load("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/VAE_model_filtered"))
-
-    lr_clf = LogisticRegression(max_iter=10000)
-    svm_clf = SVC()
-    rf_clf = RandomForestClassifier()
-    lgbm_clf = lgbm()
-    models = [lr_clf, svm_clf, rf_clf, lgbm_clf]
-    vae = vae_utils.VariationalAutoencoder(6, 161, 50)
-    vae.load_state_dict(torch.load("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/VAE_model_filtered"))
     
     # Models to be used:
     print("Initializing models")
@@ -123,8 +115,7 @@ def main():
 
     for train, test in pbkf.split(dataset=data_quantile, metadata=meta, n_projects=35):
         fold += 1
-        if fold < 5:
-            continue
+
         print(fold)
         # Split data
         X_train_quantile = data_quantile.iloc[train,:].reset_index(drop=True)

@@ -45,10 +45,10 @@ meta = meta.set_index("assay_id")
 data_quantile.sort_index(inplace=True)
 meta.sort_index(inplace=True)
 
-#with open("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/selected_features.txt", "r") as f:
-#    features = f.readlines()
-#    features = [x.strip() for x in features]
-#data_quantile = data_quantile.loc[:, features]
+with open("/home/compomics/Sam/git/python/master_thesis/Atlas_analysis/preprocessing/selected_features.txt", "r") as f:
+    features = f.readlines()
+    features = [x.strip() for x in features]
+mask = data_quantile.columns.isin(features)
 
 data_quantile = data_quantile.reset_index(drop=True).rename(columns={data_quantile.columns[x]:x for x in range(len(data_quantile.columns))})
 
@@ -72,7 +72,7 @@ models = [lr_clf, svm_clf, rf_clf, lgbm_clf]
 param = {"class_weight": weights}
 no_param = {"class_weight": None}
 
-fs = uml.FeatureSelector("anova MI LR SVC RF".split(), 300, .5)
+#fs = uml.FeatureSelector("anova MI LR SVC RF".split(), 300, .5)
 
 fold = 0
 for train, test in skf.split(X=data_quantile, y=targets):
@@ -121,13 +121,16 @@ for train, test in skf.split(X=data_quantile, y=targets):
 
     for i in range(len(X_)):
         X = pd.DataFrame(X_[i])
-        subset = fs.fit_transform(quant_scaler.inverse_transform(X), y[i])
-        subset_test = fs.transform(pd.DataFrame(scaled_test))
-        X = X.loc[:, subset.columns]
+        #subset = fs.fit_transform(quant_scaler.inverse_transform(X), y[i])
+        #subset_test = fs.transform(pd.DataFrame(scaled_test))
+        #X = X.loc[:, subset.columns]
+
+        X = X.loc[:, mask]
+        subset_test = pd.DataFrame(scaled_test).loc[:, mask]
 
         X_train.append(X)
         X_test.append(subset_test)
-        print(f"Features selected {i+1}/{len(X_)}")
+        #print(f"Features selected {i+1}/{len(X_)}")
 
 
     for model in models:
@@ -146,4 +149,5 @@ for train, test in skf.split(X=data_quantile, y=targets):
             results_df = pd.DataFrame({"model": [type(model).__name__], "fold": [fold], "micro_f1": [micro_f1],
                                         "macro_f1": [macro_f1], "weighted_f1": [weighted_f1] ,"cm": [cm],
                                         "balancer": [balancer], "n_features": [X_train[i].shape[1]]})
-            uml.save_results(results_df, "oversampling_evaluation_fs_after")
+            #uml.save_results(results_df, "oversampling_evaluation_fs_after")
+            uml.save_results(results_df, "oversampling_evaluation_final")

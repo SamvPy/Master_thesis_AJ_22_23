@@ -2,10 +2,15 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_selection import chi2, f_classif, mutual_info_classif, SelectKBest, SelectFromModel, RFE
 from sklearn.utils.validation import check_is_fitted
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, mean_squared_error
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, roc_auc_score
+from scipy.stats import pearsonr
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.impute import KNNImputer, SimpleImputer
+from sklearn.decomposition import PCA
 
 import random
 
@@ -34,31 +39,69 @@ def _identify_global_reoccured_proteins(subset, percentage_reoccurence):
 # Splitter
 # Index must be 0-n_samples bcz prob index is taken with iloc instead of loc
 class ProjectBasedSplit():
-    def __init__(self, splits, metadata, on = str):
+    def __init__(self, splits, metadata, LOOCV=False, on = str):
         """Called when training model and splitting_procedure is set as 'project'
         
         metadata: the metadata table that is used to generate splits
         
         on: the column name that represent the class column name"""
 
+        self.LOOCV = LOOCV
         self.splits = splits
         self.metadata = metadata.reset_index(drop=True)
         self.label = on
         self.label_indices = list(range(metadata[self.label].nunique()))
         self.dropped_pxds = []
 
-    def split(self, dataset, metadata, groups = None):
-        
+    def split(self, dataset, metadata, n_projects=5, groups = None):
+        self.taken_PXD = []
+        self.n_projects = n_projects
         dataset = dataset.reset_index(drop=True)
         metadata = self.metadata.loc[self.metadata.index.isin(dataset.index),:]
 
-        index_splits = []
-        for split in range(self.splits):
-            train_index, test_index, dropped_pxds = self.train_test_project_split(dataset, metadata=metadata)
-            index_splits.append((train_index, test_index))
-            self.dropped_pxds.append(dropped_pxds)
+        dataset = dataset.sort_index()
+        metadata = metadata.sort_index()
 
-            yield train_index, test_index
+        index_splits = []
+
+        if self.LOOCV:
+            for split in range(n_projects):
+                train_index, test_index, dropped_pxd = self.LOOCV_splitter(dataset, metadata=metadata)
+                index_splits.append((train_index,test_index))
+                self.dropped_pxds.append(dropped_pxd)
+
+                yield train_index,test_index
+
+        else:
+            for split in range(self.splits):
+                train_index, test_index, dropped_pxds = self.train_test_project_split(dataset, metadata=metadata)
+                index_splits.append((train_index, test_index))
+                self.dropped_pxds.append(dropped_pxds)
+
+                yield train_index, test_index
+
+    def LOOCV_splitter(self, dataset, metadata, groups=None):
+        
+        for PXD in self.metadata.PXD_accession.unique():
+
+            if PXD in self.taken_PXD:
+                continue
+
+            # All classes must be in the training set
+            if self.metadata[~self.metadata.PXD_accession.isin([PXD])].groupby(self.label).PXD_accession.nunique().shape[0] != 15:
+                continue
+
+            # Condition needed to oversample (at least 3 neighbours of the class)
+            if (self.metadata[~self.metadata.PXD_accession.isin([PXD])].Group.value_counts() < 4).sum() > 0:
+                continue
+            
+            self.taken_PXD.append(PXD)
+            break
+        
+        test_index = self.metadata[self.metadata.PXD_accession.isin([PXD])].index
+        train_index = dataset.loc[~dataset.index.isin(test_index), :].index.to_numpy()
+
+        return train_index, test_index, [PXD]
         
     def train_test_project_split(self, dataset, metadata, groups = None):
 
@@ -82,7 +125,7 @@ class ProjectBasedSplit():
             if (self.metadata[~self.metadata.PXD_accession.isin(choosen_PXD)].Group.value_counts() < 4).sum() > 0:
                 choosen_PXD = choosen_PXD[:-1]
                 
-            if len(choosen_PXD) == 5:
+            if len(choosen_PXD) == self.n_projects:
                 break
 
         test_index = self.metadata[self.metadata.PXD_accession.isin(choosen_PXD)].index
@@ -94,7 +137,8 @@ class ProjectBasedSplit():
         return self.splits
 
 
-# Imputer
+# ----------------------------------------------------------------------------
+# Imputers
 
 class LowestValueImputer(BaseEstimator, TransformerMixin):
     '''
@@ -122,6 +166,240 @@ class LowestValueImputer(BaseEstimator, TransformerMixin):
         
         return X
 
+# Variant of zero-imputation: left shifted gaussian, similar to the one implemented in Perseus (https://www.nature.com/articles/nmeth.3901)
+class LowestValueImputerGaussian(BaseEstimator, TransformerMixin):
+    '''
+    Imputes by sampling from left shifted Gaussian distribution. Imputes 0 if protein was not identified in 50% of samples belonging to the class
+    '''
+
+    def __init__(self, mean_shift=2, std_scale=0.3, lowest_val = False):
+        self.fitted = False
+        self.mean_shift = mean_shift
+        self.std_scale = std_scale
+        self.lowest_val = lowest_val
+        self.imputed_values = {}
+    
+    def fit(self, X, y=None):
+        
+        X = pd.DataFrame(X)
+        self.mean_std_df = pd.DataFrame({"mean": X.mean(), "std": X.std()})
+
+        #imputed_data = X.apply(lambda x: self.impute(x), axis=1)
+
+        return self
+
+    def transform(self, X, y=None):
+        check_is_fitted(self, 'mean_std_df')
+
+        X_imputed = pd.DataFrame(X, columns=self.mean_std_df.index).copy()
+
+        # Create imputation matrix
+        imputation_matrix = []
+        for i in self.mean_std_df.index:
+            m, s = self.mean_std_df.loc[i]
+            imputation_matrix.append(np.random.normal(m-self.mean_shift*s, s*self.std_scale, size=len(X)))
+        imputation_matrix = pd.DataFrame(data=imputation_matrix, index=self.mean_std_df.index).T
+
+        if self.lowest_val:
+            imputation_matrix.where(imputation_matrix>self.lowest_val, other = self.lowest_val, inplace=True)
+
+        for i in X_imputed.columns:
+            X_imputed[i].fillna(imputation_matrix[i], inplace=True)
+        
+        return X_imputed
+
+# Initialize random values
+def PCA_imputation(dataset, explained_variance=.95, max_iter=50, keep_PC_constant = True, get_knn_corr=False):
+    '''Accepts non minmax normalized dataset'''
+
+    dataset = dataset.reset_index(drop=True).rename(columns={dataset.columns[x]:x for x in range(len(dataset.columns))})
+    mm_scaler = MinMaxScaler()
+    scaled_dataset = pd.DataFrame(mm_scaler.fit_transform(dataset))
+    non_MV_indices = dataset.melt()["value"].dropna().index
+    MV_indices = dataset.melt().index[dataset.melt().isna()["value"]]
+    MSEs = []
+    MSEs_unrescaled = []
+    corr_PCA_KNN = []
+
+    if get_knn_corr:
+        knn_imputer = KNNImputer(n_neighbors=10, weights="distance")
+        X_knn_imputed = knn_imputer.fit_transform(scaled_dataset)
+        X_knn_imputed = pd.DataFrame(mm_scaler.inverse_transform(X_knn_imputed))
+        mv_knn = X_knn_imputed.melt().loc[MV_indices, 'value']
+
+    for i in range(max_iter):
+
+        # Initialize missing values with mean imputation
+        if i == 0:
+            scaler = MinMaxScaler()
+            dataset_scaled = scaler.fit_transform(dataset)
+            mean_imputation = SimpleImputer(strategy='mean')
+            X_imputed = mean_imputation.fit_transform(dataset_scaled)
+            print("First iteration:", i)
+
+        # Else use the calculated PC imputation and iterate
+        else:
+            # Scale data
+            scaler = MinMaxScaler()
+            X_imputed = scaler.fit_transform(X_imputed)
+
+        
+        print("iteration:", i)
+        # Select component explaining 95% of the data 
+        if not keep_PC_constant or (i ==0):  
+            pca_model = PCA()
+            embedded = pca_model.fit_transform(X_imputed)
+            components_to_keep = sum(np.cumsum(pca_model.explained_variance_ratio_) < explained_variance)
+            print('Components:', components_to_keep)
+
+        # Refit and reconstruct
+        pca_model = PCA(n_components=components_to_keep)
+        embedded = pca_model.fit_transform(X_imputed)
+        reconstructed = pca_model.inverse_transform(embedded)
+
+        # Standardise back
+        rescaled_reconstructed = scaler.inverse_transform(reconstructed)
+        rescaled_reconstructed = pd.DataFrame(rescaled_reconstructed)
+
+        # Fill in new dataframe with computed missing values retaining non-missing values
+        X_imputed = dataset.copy()
+        for i in X_imputed.columns:
+            X_imputed[i].fillna(rescaled_reconstructed[i], inplace=True)
+        
+        # Compute reconstruction error with MSE of the observed values only. This is done by setting the missing values to same value in both dataframes (original and reconstructed)
+        MSE_unrescaled = mean_squared_error(scaled_dataset.melt()["value"].dropna(), pd.DataFrame(reconstructed).melt()["value"][non_MV_indices])
+        MSEs_unrescaled.append(MSE_unrescaled)
+
+        MSE = mean_squared_error(dataset.melt()["value"].dropna(), rescaled_reconstructed.melt()["value"][non_MV_indices])
+        MSEs.append(MSE)
+
+        if get_knn_corr:
+            mv_pca = rescaled_reconstructed.melt().loc[MV_indices, 'value']
+            corr_PCA_KNN.append(pearsonr(mv_knn, mv_pca)[0])
+
+    if get_knn_corr:
+        return X_imputed, MSEs, MSEs_unrescaled, corr_PCA_KNN
+
+    return X_imputed, MSEs, MSEs_unrescaled
+
+
+class MNAR_MCAR_Imputer(BaseEstimator, TransformerMixin):
+    '''
+    Imputes values either with left-censored gaussian or PCA/KNN imputation.
+
+    This delineation is only made during the fit phase for training data when labels are seen.
+    For test data, PCA/KNN imputation is done dependant on which one was chosen during initialization ('pca', 'knn')
+
+    MNAR is done when > a% of a protein in a group is missing.
+    For example: A0AVT1 is only found in (a=.8) 20% of samples in group Glioblastoma --> perform MNAR method for this protein for samples in Glioblastoma
+
+    '''
+
+    def __init__(self, missing_percentage = .8, MCAR_estimator = "pca", mean_shift=2, 
+                 std_scale=.3, lowest_val=False, explained_variance=.95, max_iter=50, keep_PC_constant=True,
+                 n_neighbors = 10, weights='distance'):
+        
+        assert MCAR_estimator in ["pca", "knn"]
+        self.missing_percentage = missing_percentage
+        self.MCAR_estimator = MCAR_estimator
+        self.fitted = False
+        self.mean_shift = mean_shift
+        self.std_scale = std_scale
+        self.lowest_val = lowest_val
+        self.explained_variance = explained_variance
+        self.max_iter = max_iter
+        self.keep_PC_constant = keep_PC_constant
+        self.n_neighbors = n_neighbors
+        self.weights = weights
+
+    def fit(self, X, y):
+        assert len(X) == len(y)
+        X = pd.DataFrame(X).reset_index(drop=True).rename(columns={X.columns[x]:x for x in range(len(X.columns))})
+        
+        self.mean_std_df = pd.DataFrame({"mean": X.mean(), "std": X.std()})
+        
+        self.mv_LOD_group = {}
+        for group in np.unique(y):
+
+            mv_perc_group = X[y==group].isna().sum() / (y==group).sum()
+            self.mv_LOD_group[group] = X.columns[mv_perc_group < self.missing_percentage]
+            
+        return self
+
+    def transform(self, X, y=np.array([None])):
+        check_is_fitted(self, 'mean_std_df')
+
+        # If train set is imputed and LOD must be used
+        if not (y == None).all():
+            
+            # 1. MNAR-imputation
+
+            X_imputed = pd.DataFrame(X).reset_index(drop=True).rename(columns={X.columns[x]:x for x in range(len(X.columns))})
+            melted_df = X_imputed.melt()
+            all_mv_indices = melted_df.index[melted_df.isna()["value"]]
+
+            # Create imputation matrix. This can be accessed to compare which values would be imputed if PCA/KNN would be used for the complete dataset
+            imputation_matrix = []
+            for i in self.mean_std_df.index:
+                m, s = self.mean_std_df.loc[i]
+                imputation_matrix.append(np.random.normal(m-self.mean_shift*s, s*self.std_scale, size=len(X)))
+            self.imputation_matrix = pd.DataFrame(data=imputation_matrix, index=self.mean_std_df.index).T
+
+            # Make sure no values are imputed below 0 (when minmax normalized) (this case, no minmax is assumed)
+            #self.imputation_matrix.where(self.imputation_matrix>0, other = 0, inplace=True)
+
+            # Set imputation columns that do not fullfill MNAR-imputation condition to np.nan. This prevents imputation for certain cells.
+            for group in np.unique(y):
+                not_impute_columns = self.mv_LOD_group[group]
+                self.imputation_matrix.loc[y==group, not_impute_columns] = np.nan
+            
+            for i in X_imputed.columns:
+                X_imputed[i].fillna(self.imputation_matrix[i], inplace=True)
+
+            # 2. PCA/KNN imputation
+            # Store how each MV is interpreted (either MNAR or MCAR) for the training data
+            melted_df = X_imputed.melt()
+            self.pca_knn_mv_indices = melted_df.index[melted_df.isna()["value"]]
+            self.lod_mv_indices = [x for x in all_mv_indices if x not in self.pca_knn_mv_indices] 
+            
+            self.X_pca_imputed, self.MSE_rescaled, self.MSEs_scaled = PCA_imputation(X_imputed, explained_variance=self.explained_variance, max_iter=self.max_iter, keep_PC_constant=self.keep_PC_constant)
+
+            knn_imputer = KNNImputer(n_neighbors=self.n_neighbors, weights=self.weights)
+            self.X_knn_imputed = knn_imputer.fit_transform(X_imputed)
+
+            mv_knn = pd.DataFrame(self.X_knn_imputed).melt().loc[self.pca_knn_mv_indices, 'value']
+            mv_pca = pd.DataFrame(self.X_pca_imputed).melt().loc[self.pca_knn_mv_indices, 'value']
+                
+            self.corr_knn_PCA = pearsonr(mv_knn, mv_pca)
+                
+            if self.MCAR_estimator == "pca":
+                return self.X_pca_imputed
+            elif self.MCAR_estimator == "knn":
+                return self.X_knn_imputed
+
+        # else test set must be fitted. Retrain PCA/KNN together with imputed training data
+        else:
+            check_is_fitted(self, 'X_pca_imputed', msg="First transform a training set by providing an array of labels to y during transform")
+
+            X_imputed = pd.DataFrame(X, columns=self.mean_std_df.index).reset_index(drop=True)
+            train_and_test = pd.concat([self.X_pca_imputed, X_imputed]).reset_index(drop=True)
+            test_indices = list(range(len(self.X_pca_imputed), len(train_and_test)))
+
+            melted_train_and_test = train_and_test.melt()
+            test_mv_indices = melted_train_and_test.index[melted_train_and_test.isna()["value"]]
+
+            self.X_pca_imputed_test, self.MSE_rescaled_test, self.MSEs_scaled_test = PCA_imputation(train_and_test, explained_variance=self.explained_variance, max_iter=self.max_iter, keep_PC_constant=self.keep_PC_constant)
+            self.X_pca_imputed_test = pd.DataFrame(self.X_pca_imputed_test).loc[test_indices,:]
+
+            knn_imputer = KNNImputer(n_neighbors=self.n_neighbors, weights=self.weights)
+            self.X_knn_imputed_test = knn_imputer.fit_transform(train_and_test)
+            self.X_knn_imputed_test = pd.DataFrame(self.X_knn_imputed_test).loc[test_indices, :]
+                
+            if self.MCAR_estimator == "pca":
+                return self.X_pca_imputed_test
+            elif self.MCAR_estimator == "knn":
+                return self.X_knn_imputed_test
+            
 #--------------------------------------------------------------------------------------
 # Filters 
 
@@ -226,13 +504,21 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
             if selector == "LR":
                 self.selector_models.append(SelectFromModel(LogisticRegression(penalty="l1", solver = "liblinear", multi_class="ovr"), max_features=self.num_features))
             if selector == "SVC":
-                self.selector_models.append(RFE(SVC(class_weight="balanced", kernel = "linear"), n_features_to_select=self.num_features, step=500))
+                self.selector_models.append(RFE(SVC(class_weight="balanced", kernel = "linear"), n_features_to_select=self.num_features, step=50))
+            if selector == "RF":
+                self.selector_models.append(RFE(RandomForestClassifier(class_weight="balanced"), n_features_to_select=self.num_features, step=50))
 
         self.supports = []
         
-        for selector in self.selector_models:
-            selector.fit(X,y)
-            self.supports.append(selector.get_support())
+        for i, selector in enumerate(self.selector_models):
+            if self.selectors[i] in ["LR", "SVC", "RF"]:
+                X_scaled = MinMaxScaler().fit_transform(X)
+                selector.fit(X_scaled, y)
+                self.supports.append(selector.get_support())
+            
+            else:
+                selector.fit(X,y)
+                self.supports.append(selector.get_support())
         
         votes = np.sum(self.supports, axis = 0) / len(self.selector_models)
         final_mask = votes >= self.threshold

@@ -3,12 +3,10 @@
 # Models
 from sklearn.base import BaseEstimator, TransformerMixin
 
-import xgboost as xgb
 from lightgbm import LGBMClassifier as lgbm
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
+
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -83,40 +81,9 @@ print(weights)
 lr_clf = LogisticRegression(max_iter=10000)
 svm_clf = SVC()
 rf_clf = RandomForestClassifier()
-xgb_clf = xgb.XGBClassifier()
 lgbm_clf = lgbm()
-nb_clf = GaussianNB()
-knn_clf = KNeighborsClassifier()
 
 models = [lr_clf, svm_clf, rf_clf, lgbm_clf]
-
-# Parameter grids
-lr_grid = {"penalty" : ['l2', 'l1'],
-            "dual": [False],
-            "max_iter": [10000],
-            "class_weight": [weights],
-            "C": np.linspace(0.005, 15, 10),
-            'solver': ['newton-cg', 'sag', 'lbfgs', "liblinear"]}
-
-svc_grid = {'decision_function_shape': ["ovr"],
-            "kernel": ['linear', 'poly', 'rbf'],
-            "C": np.linspace(0.0005, 5, 10),
-            "class_weight": [weights]}
-
-rf_grid = {'n_estimators': np.linspace(10, 200, 4, dtype = int),
-            "criterion": ["entropy", "gini"], 
-            "max_depth": [10,20,40, None],
-            "class_weight": [weights]}
-
-xgb_grid = {"verbosity": [0],
-            'eta': np.linspace(0.005,0.5,5),
-            'gamma': np.linspace(0.005,10,5),
-            'max_depth': [3,5,7,10]}
-
-gnb_grid = {'var_smoothing': np.logspace(0,-15,15)}
-
-
-grids = {"lr": lr_grid, "svc": svc_grid, "rf": rf_grid, "gnb": gnb_grid}
 
 
 imputation_methods = [uml.MNAR_MCAR_Imputer(max_iter=15, MCAR_estimator='knn'), uml.MNAR_MCAR_Imputer(max_iter=15, MCAR_estimator='pca'), uml.LowestValueImputerGaussian(), KNNImputer(n_neighbors=10), uml.MNAR_MCAR_Imputer(missing_percentage=1, MCAR_estimator='pca', max_iter=15)]
@@ -187,15 +154,8 @@ for train, test in pbkf.split(dataset=data_nsaf, metadata=meta, n_projects=35):
             # For each model
             print("Training models")
             for clf in models:
-                #if type(clf).__name__ == 'XGBClassifier':
-                    
-                #    xgb_train = xgb.DMatrix(X_train_selection, label=Y_train, weight = [weights[x] for x in Y_train])
-                #    xgb_test = xgb.DMatrix(X_test_selection)
-                    
-                #    clf.fit(xgb_train, Y_train)
-                #    Y_pred = clf.predict(xgb_test)
-                
-                #else:
+
+
                 clf.set_params(class_weight = weights)
                 clf.fit(X_train_selection, Y_train)
                 Y_pred = clf.predict(X_test_selection)
