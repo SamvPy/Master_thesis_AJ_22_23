@@ -3,7 +3,7 @@
 ## Python script
 
 * **utils_ML.py** <br>
-In this folder multiple utility functions that are used during data analysis are implemented. These include the following:
+In this script multiple utility functions that are used during data analysis are implemented. These include the following:
     - filtering functions and classes
     - Custom data splitter class
     - Imputer classes
@@ -16,7 +16,7 @@ In this folder multiple utility functions that are used during data analysis are
 Contains notebooks that explore the NSAF-atlas for biases
 
 * **ML** <br>
-Contains notebooks and files related to machine learning modelling of the data. Also contains the folders with machine learning evaluation metrics and SHAP-values after model optimalisation
+Contains notebooks and files related to machine learning modelling of the data. Also contains the folders with model evaluation metrics and SHAP-values after model optimalisation
 
 * **PEMatrix**
 Contains the data matrices after normalisation
