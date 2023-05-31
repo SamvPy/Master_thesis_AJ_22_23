@@ -18,10 +18,8 @@ Contains notebooks that explore the NSAF-atlas for biases
 * **ML** <br>
 Contains notebooks and files related to machine learning modelling of the data. Also contains the folders with model evaluation metrics and SHAP-values after model optimalisation
 
-* **PEMatrix**
+* **PEMatrix** <br>
 Contains the data matrices after normalisation
 
 * **preprocessing** <br>
 Contains notebooks related to preprocessing of the NSAF-atlas. These include normalisation, imputation, feature selection and oversampling
-
-* **results**
