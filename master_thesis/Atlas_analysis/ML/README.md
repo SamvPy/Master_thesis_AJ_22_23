@@ -25,10 +25,10 @@ Script evaluating classification performance when first oversampling on the fPEM
 * **project_split_eval**<br>
 Final model classification performance estimation with the leave-one-project-out cross validation for the optimised model and pipeline
 
-* **vae_filtered_hyperparameter_opt.py**
+* **vae_filtered_hyperparameter_opt.py** <br>
 Script used to perform parameter sweep for the VAE with feature selected dataset
 
-* **vae_hyperparameter_opt.py**
+* **vae_hyperparameter_opt.py** <br>
 Script used to perform parameter swee for the VAE on the fPEMatrix
 
 * **vae_utils.py** <br>
