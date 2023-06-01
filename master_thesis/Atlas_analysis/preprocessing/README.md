@@ -30,9 +30,6 @@ In this notebook, the optimal parameters of the VAE are chosen based on a small 
 
 ## Files
 
-* **\*_NSAF_50.csv**<br>
-Normalised datasets
-
 * **enrichment.all.tsv**<br>
 STRING-enrichment file from the interaction network of the least variable proteins, as described at the end of *normalization_methods.ipynb*
 
