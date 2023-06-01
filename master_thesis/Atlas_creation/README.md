@@ -21,7 +21,7 @@ Contains an evaluation of the combining fractions (pooling) strategy.
 Contains part of the fraction identifier annotation
 
 * **proteome_nsaf_3.h5**<br>
-The NSAF-atlas without pooling
+This file was too large to upload. However, if this file is needed, feel free to contact me at sam.vanpuyenbroeck@ugent.be and I will send it to you
 
 * **proteome_nsaf_pooled_3.h5**<br>
 The NSAF-atlas with the pooling strategy
