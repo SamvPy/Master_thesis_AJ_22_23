@@ -65,8 +65,8 @@ Mapped GO-terms with each uniprot identifier
 * **string_interaction_scores_all.csv** <br>
 STRING-score file for all pairwise proteins. Downloaded from "https://string-db.org/cgi/download.pl (version 11.5)"
 
-* **ML** <br>
-Contains notebooks and files related to machine learning modelling of the data. Also contains the folders with machine learning evaluation metrics and SHAP-values after model optimalisation
+* **filtered_proteins** <br>
+Selected proteins during feature selection as described in *feature_selection.ipynb* in the preprocessing folder
 
 ## Folders
 
